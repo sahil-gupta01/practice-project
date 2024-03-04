@@ -5,9 +5,11 @@ import ecommerce.ecommerce.dtos.ErrorResponseDto;
 import ecommerce.ecommerce.dtos.ProductRequestDto;
 import ecommerce.ecommerce.dtos.ProductWrapper;
 import ecommerce.ecommerce.exceptions.InvalidProductIdException;
+import ecommerce.ecommerce.models.Category;
 import ecommerce.ecommerce.models.Product;
 import ecommerce.ecommerce.services.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
@@ -18,8 +20,12 @@ import java.util.List;
 @RestController
 public class ProductController {
 
-    @Autowired
     private IProductService productService;
+
+    @Autowired
+    public ProductController(@Qualifier("selfProductService") IProductService productService) {
+        this.productService = productService;
+    }
 
     @GetMapping("/products")
     public List<Product> getAllProducts(){
@@ -38,11 +44,42 @@ public class ProductController {
 
     @PostMapping("/products")
     public Product addProduct(@RequestBody ProductRequestDto requestDto){
-        return null;
+        Product product = new Product();
+
+        product.setName(requestDto.getTitle());
+        product.setDescription(requestDto.getDescription());
+        product.setImage(requestDto.getImage());
+        product.setAmount(requestDto.getPrice());
+
+        product.setCategory(new Category());
+        product.getCategory().setName(requestDto.getCategory());
+
+        Product finalProduct = productService.addProduct(product);
+        return finalProduct;
     }
+
+//    For FakeStore API
+
+//    @PutMapping("/products/{id}")
+//    public Product updateProduct(@PathVariable("id") Long id, @RequestBody ProductRequestDto requestDto){
+//        return productService.updateProduct(id, requestDto);
+//    }
+
     @PutMapping("/products/{id}")
-    public Product updateProduct(@PathVariable("id") Long id, @RequestBody ProductRequestDto requestDto){
-        return productService.updateProduct(id, requestDto);
+    public Product updateProduct(@PathVariable("id") Long id, @RequestBody ProductRequestDto requestDto) throws InvalidProductIdException {
+        Product product = new Product();
+
+        product.setId(id);
+        product.setName(requestDto.getTitle());
+        product.setDescription(requestDto.getDescription());
+        product.setImage(requestDto.getImage());
+        product.setAmount(requestDto.getPrice());
+
+        product.setCategory(new Category());
+        product.getCategory().setName(requestDto.getCategory());
+
+        Product finalProduct = productService.updateProduct(id, requestDto);
+        return finalProduct;
     }
 
     @DeleteMapping("/products/{id}")

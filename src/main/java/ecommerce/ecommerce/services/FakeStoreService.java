@@ -52,6 +52,11 @@ public class FakeStoreService implements IProductService{
         return products;
     }
 
+    @Override
+    public Product addProduct(Product product) {
+        return null;
+    }
+
     private Product getProductFromResponse(ProductResponseDto response) {
         Product product = new Product();
         product.setAmount(response.getPrice());

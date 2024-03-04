@@ -11,7 +11,9 @@ import java.util.List;
 public interface IProductService {
     public Product getProductById(Long id) throws InvalidProductIdException;
 
-    Product updateProduct(Long id, ProductRequestDto requestDto);
+    Product updateProduct(Long id, ProductRequestDto requestDto) throws InvalidProductIdException;
 
     List<Product> getAllProducts();
+
+    Product addProduct(Product product);
 }
